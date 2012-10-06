@@ -82,13 +82,7 @@ var props = [
 // parse list
 
 function list(str) {
-  return str.split(/ *, */);
-}
-
-// prefix names
-
-function prefix(names) {
-  return names.map(function(name){
+  return str.split(/ *, */).map(function(name){
     return '-' + name + '-';
   });
 }
