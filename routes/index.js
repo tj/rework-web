@@ -79,6 +79,20 @@ var props = [
   'wrap-through'
 ];
 
+// parse list
+
+function list(str) {
+  return str.split(/ *, */);
+}
+
+// prefix names
+
+function prefix(names) {
+  return names.map(function(name){
+    return '-' + name + '-';
+  });
+}
+
 /*
  * GET home page.
  */
@@ -94,10 +108,27 @@ exports.index = function(req, res){
 exports.process = function(req, res, next){
   var file = req.files.style;
   if (!file) return res.send(400, '"style" required, try `curl -F style=@my.css`');
+
+  var vendors = list(req.query.vendors || 'o,ms,moz,webkit');
+  console.log('vendors %j', vendors);
   console.log('reading %s', file.path);
+
   fs.readFile(file.path, 'utf8', function(err, css){
     if (err) return next(err);
     console.log('processing %s', bytes(css.length));
 
+    var style = rework(css)
+      .vendors(vendors)
+      .use(rework.keyframes())
+      .use(rework.prefixValue('transform'))
+      .use(rework.prefix(props))
+      .use(rework.at2x())
+
+    if (~vendors.indexOf('-ms-')) {
+      style.use(rework.opacity());
+    }
+
+    res.type('css');
+    res.send(style.toString());
   });
 };
