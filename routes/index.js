@@ -101,7 +101,7 @@ exports.index = function(req, res){
 
 exports.process = function(req, res, next){
   var file = req.files.style;
-  if (!file) return res.send(400, '"style" required, try `curl -F style=@my.css`');
+  if (!file) return res.send(400, '"style" required, try `curl -F style=@my.css http://rework.jit.su`');
 
   var vendors = list(req.query.vendors || 'o,ms,moz,webkit');
   console.log('vendors %j', vendors);
